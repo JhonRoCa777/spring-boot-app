@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: asopagos_postgres_dev
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: asopagos_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d asopagos_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  springboot:
+    container_name: springboot_server_dev
+    build:
+      context: ./spring-boot-server
+      dockerfile: Dockerfile
+    image: springboot_server:dev
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: "dev"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/asopagos_db"
+      SPRING_DATASOURCE_USERNAME: "postgres"
+      SPRING_DATASOURCE_PASSWORD: "postgres"
+    volumes:
+      - ./spring-boot-server:/app
+      - maven_repo:/root/.m2
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  maven_repo:

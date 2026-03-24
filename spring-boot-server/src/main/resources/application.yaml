@@ -1,0 +1,22 @@
+spring:
+  jackson:
+    default-property-inclusion: non_null
+  application:
+    name: spring-boot-server
+  datasource:
+    url: jdbc:postgresql://localhost:5432/asopagos_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+jwt:
+  secret: "6cbcaf32-c790-45fb-aa03-d008f5ef20a8"
+  expiration: 86400000
